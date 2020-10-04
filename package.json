@@ -1,0 +1,79 @@
+{
+	"name": "preact-fetching",
+	"version": "0.1.0",
+	"description": "Preact hooks for asynchronous data fetching",
+	"main": "build/index.js",
+	"module": "build/index.esm.js",
+	"exports": {
+		".": {
+			"import": "./build/index.esm.js",
+			"require": "./build/index.js"
+		}
+	},
+	"typings": "build/index.d.ts",
+	"sideEffects": false,
+	"files": [
+		"build"
+	],
+	"scripts": {
+		"clean": "rimraf build",
+		"compile:cjs": "babel src/index.js -o build/index.js",
+		"compile:esm": "BABEL_ENV=esm babel src/index.js -o build/index.esm.js",
+		"compile": "run-p compile:*",
+		"minify:cjs": "terser build/index.js -m -o build/index.min.js",
+		"minify:esm": "terser build/index.esm.js -m -o build/index.esm.min.js",
+		"minify": "run-p minify:*",
+		"compile-minify": "run-s compile minify",
+		"prebuild": "npm run clean",
+		"build": "run-p typecheck compile-minify",
+		"typecheck": "tsc",
+		"lint": "eslint src",
+		"unit-test": "BABEL_ENV=test jest src/*.test.js",
+		"test": "run-p typecheck lint unit-test",
+		"prepublishOnly": "run-p test build"
+	},
+	"author": {
+		"name": "Andrew Duthie",
+		"email": "andrew@andrewduthie.com",
+		"url": "https://andrewduthie.com"
+	},
+	"homepage": "https://github.com/aduth/preact-fetching",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/aduth/preact-fetching.git"
+	},
+	"bugs": {
+		"url": "https://github.com/aduth/preact-fetching/issues"
+	},
+	"license": "MIT",
+	"keywords": [
+		"preact",
+		"async",
+		"fetch"
+	],
+	"devDependencies": {
+		"@babel/cli": "^7.11.6",
+		"@babel/core": "^7.11.6",
+		"@babel/preset-env": "^7.11.5",
+		"@testing-library/preact": "^2.0.0",
+		"@testing-library/preact-hooks": "^1.0.6",
+		"@types/jest": "^26.0.13",
+		"babel-jest": "^26.3.0",
+		"core-js": "^3.6.5",
+		"eslint": "^7.8.1",
+		"eslint-config-airbnb-base": "^14.2.0",
+		"eslint-config-prettier": "^6.11.0",
+		"eslint-plugin-import": "^2.22.0",
+		"eslint-plugin-prettier": "^3.1.4",
+		"jest": "^26.4.2",
+		"npm-run-all": "^4.1.5",
+		"preact": "^10.4.8",
+		"prettier": "^2.1.1",
+		"rimraf": "^3.0.2",
+		"terser": "^5.3.2",
+		"typescript": "^4.0.2"
+	},
+	"peerDependencies": {
+		"preact": ">=10"
+	}
+}

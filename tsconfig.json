@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"lib": ["ES2020"],
+		"moduleResolution": "node",
+		"rootDir": "src",
+		"outDir": "build",
+		"strict": true,
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		"esModuleInterop": true,
+		"allowJs": true,
+		"checkJs": true
+	},
+	"files": ["./src/index.js"]
+}

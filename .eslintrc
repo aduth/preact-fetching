@@ -1,0 +1,21 @@
+{
+	"root": true,
+	"extends": ["airbnb-base", "prettier"],
+	"plugins": ["prettier"],
+	"parserOptions": {
+		"ecmaVersion": 2020
+	},
+	"env": {
+		"jest": true
+	},
+	"rules": {
+		"import/no-mutable-exports": "off",
+		"guard-for-in": "off",
+		"no-plusplus": "off",
+		"no-restricted-syntax": "off",
+		"no-use-before-define": "off",
+		"no-var": "off",
+		"prefer-const": "off",
+		"prettier/prettier": "error"
+	}
+}
