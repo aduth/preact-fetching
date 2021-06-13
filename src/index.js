@@ -171,7 +171,7 @@ import { useState, useContext, useEffect } from 'preact/hooks';
  * Context serving as cache state container. For most usage, you shouldn't need to interface with
  * the context object, but in advanced use-cases you can use this to substitute or scope caches.
  */
-let CacheContext = createContext(/** @type {Cache<any>} */ (new Map()));
+const CacheContext = createContext(/** @type {Cache<any>} */ (new Map()));
 
 /**
  * Triggers a new fetch request as appropriate and returns a result of the current status.
@@ -184,11 +184,11 @@ let CacheContext = createContext(/** @type {Cache<any>} */ (new Map()));
  * @return {Result<Data>}
  */
 function useQuery(key, fetcher) {
-	let cache = useContext(CacheContext);
-	let [value, setValue] = useState(getNextValue);
+	const cache = useContext(CacheContext);
+	const [value, setValue] = useState(getNextValue);
 
 	useEffect(() => {
-		let { status, subscribers } = getCacheEntry();
+		const { status, subscribers } = getCacheEntry();
 		subscribers.push(setValue);
 
 		if (status !== 'loading') refetch();
@@ -203,9 +203,9 @@ function useQuery(key, fetcher) {
 	 * @return {Result<Data>}
 	 */
 	function getNextValue() {
-		let cacheEntry = getCacheEntry();
+		const cacheEntry = getCacheEntry();
 
-		let nextValue = /** @type {Result<Data>} */ ({
+		const nextValue = /** @type {Result<Data>} */ ({
 			status: cacheEntry.status,
 			data: cacheEntry.data,
 			isLoading: cacheEntry.status === 'loading',
@@ -237,14 +237,14 @@ function useQuery(key, fetcher) {
 	 * @param {Partial<CacheEntry<Data>>} nextCacheValuePatch
 	 */
 	function setCacheValue(nextCacheValuePatch) {
-		let cacheEntry = getCacheEntry();
+		const cacheEntry = getCacheEntry();
 
-		for (let patchKey in nextCacheValuePatch) {
+		for (const patchKey in nextCacheValuePatch) {
 			// @ts-ignore
 			cacheEntry[patchKey] = nextCacheValuePatch[patchKey];
 		}
 
-		let nextValue = getNextValue();
+		const nextValue = getNextValue();
 		cacheEntry.subscribers.forEach((setSubscriberValue) => {
 			setSubscriberValue(nextValue);
 		});

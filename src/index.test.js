@@ -6,7 +6,7 @@ const getUniqueKey = () => `example${++getUniqueKey.counter}`;
 getUniqueKey.counter = 0;
 
 describe('useQuery', () => {
-	it('returns initial value', async () => {
+	it('returns initial value', () => {
 		const key = getUniqueKey();
 		const fetcher = () => null;
 		const { result } = renderHook(() => useQuery(key, fetcher));
@@ -133,7 +133,7 @@ describe('useQuery', () => {
 		]);
 	});
 
-	it('removes subscriber on unmount', async () => {
+	it('removes subscriber on unmount', () => {
 		const key = getUniqueKey();
 		const cache = new Map();
 		const { unmount } = renderHook(() => useQuery(key, () => null), {
@@ -149,7 +149,7 @@ describe('useQuery', () => {
 		const key = getUniqueKey();
 		const error = new Error();
 		const { result, waitFor } = renderHook(() =>
-			useQuery(key, async () => {
+			useQuery(key, () => {
 				throw error;
 			})
 		);
@@ -173,7 +173,7 @@ describe('useQuery', () => {
 
 		let firstFetch = true;
 		const { result, waitFor } = renderHook(() =>
-			useQuery(key, async () => {
+			useQuery(key, () => {
 				if (firstFetch) {
 					firstFetch = false;
 					throw error;
@@ -214,7 +214,7 @@ describe('useQuery', () => {
 
 		let firstFetch = true;
 		const { result, waitFor } = renderHook(() =>
-			useQuery(key, async () => {
+			useQuery(key, () => {
 				if (!firstFetch) {
 					throw error;
 				}

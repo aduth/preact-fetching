@@ -52,6 +52,7 @@
 		"fetch"
 	],
 	"devDependencies": {
+		"@aduth/eslint-config": "^4.0.1",
 		"@babel/cli": "^7.11.6",
 		"@babel/core": "^7.11.6",
 		"@babel/preset-env": "^7.11.5",
@@ -60,11 +61,9 @@
 		"@types/jest": "^26.0.13",
 		"babel-jest": "^26.3.0",
 		"core-js": "^3.6.5",
-		"eslint": "^7.8.1",
-		"eslint-config-airbnb-base": "^14.2.0",
-		"eslint-config-prettier": "^6.11.0",
-		"eslint-plugin-import": "^2.22.0",
-		"eslint-plugin-prettier": "^3.1.4",
+		"eslint": "^7.28.0",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-prettier": "^3.4.0",
 		"jest": "^26.4.2",
 		"npm-run-all": "^4.1.5",
 		"preact": "^10.4.8",
