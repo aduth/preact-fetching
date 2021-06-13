@@ -148,11 +148,7 @@ describe('useQuery', () => {
 	it('renders with error', async () => {
 		const key = getUniqueKey();
 		const error = new Error();
-		const { result, waitFor } = renderHook(() =>
-			useQuery(key, () => {
-				throw error;
-			})
-		);
+		const { result, waitFor } = renderHook(() => useQuery(key, jest.fn().mockRejectedValue(error)));
 
 		await waitFor(() => result.current.isError);
 
@@ -171,16 +167,8 @@ describe('useQuery', () => {
 		const key = getUniqueKey();
 		const error = new Error();
 
-		let firstFetch = true;
 		const { result, waitFor } = renderHook(() =>
-			useQuery(key, () => {
-				if (firstFetch) {
-					firstFetch = false;
-					throw error;
-				}
-
-				return null;
-			})
+			useQuery(key, jest.fn().mockRejectedValueOnce(error).mockReturnValue(null))
 		);
 
 		await waitFor(() => result.current.isError);
@@ -212,16 +200,8 @@ describe('useQuery', () => {
 		const key = getUniqueKey();
 		const error = new Error();
 
-		let firstFetch = true;
 		const { result, waitFor } = renderHook(() =>
-			useQuery(key, () => {
-				if (!firstFetch) {
-					throw error;
-				}
-
-				firstFetch = false;
-				return null;
-			})
+			useQuery(key, jest.fn().mockReturnValueOnce(null).mockRejectedValue(error))
 		);
 
 		await waitFor(() => result.current.isSuccess);
