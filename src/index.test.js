@@ -82,7 +82,8 @@ describe('useQuery', () => {
 		let callCount = 0;
 		const key = getUniqueKey();
 		let { result, waitFor } = renderHook(
-			({ queryKey = key } = /** @type {{queryKey?: string}} */ ({})) =>
+			/** @param {{queryKey?: string}} Props */
+			({ queryKey = key } = {}) =>
 				useQuery(queryKey, () => {
 					callCount++;
 					return queryKey;
@@ -94,7 +95,8 @@ describe('useQuery', () => {
 		const nextKey = getUniqueKey();
 		// TODO: rerender({ queryKey: nextKey });
 		({ result, waitFor } = renderHook(
-			({ queryKey = nextKey } = /** @type {{queryKey?: string}} */ ({})) =>
+			/** @param {{queryKey?: string}} Props */
+			({ queryKey = nextKey } = {}) =>
 				useQuery(queryKey, () => {
 					callCount++;
 					return queryKey;
