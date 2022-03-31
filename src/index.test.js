@@ -25,7 +25,7 @@ describe('useQuery', () => {
 		const key = getUniqueKey();
 		const { result, waitFor } = renderHook(() => useQuery(key, () => null));
 
-		await waitFor(() => expect(result.current.status).toBe('success'));
+		await waitFor(() => expect(result.current?.status).toBe('success'));
 
 		expect(result.current).toEqual({
 			status: 'success',
@@ -45,8 +45,8 @@ describe('useQuery', () => {
 		const { result: result2, waitFor: waitFor2 } = renderHook(() => useQuery(key, fetcher));
 
 		await Promise.all([
-			waitFor1(() => expect(result1.current.data).toBe(null)),
-			waitFor2(() => expect(result2.current.data).toBe(null)),
+			waitFor1(() => expect(result1.current?.data).toBe(null)),
+			waitFor2(() => expect(result2.current?.data).toBe(null)),
 		]);
 
 		expect(fetcher).toBeCalledTimes(1);
@@ -57,9 +57,9 @@ describe('useQuery', () => {
 		let value = 0;
 		const { result, waitFor } = renderHook(() => useQuery(key, () => ++value));
 
-		await waitFor(() => expect(result.current.data).toBe(1));
-		act(() => result.current.refetch());
-		await waitFor(() => expect(result.current.data).toBe(2));
+		await waitFor(() => expect(result.current?.data).toBe(1));
+		act(() => result.current?.refetch());
+		await waitFor(() => expect(result.current?.data).toBe(2));
 	});
 
 	it('maintains data during refetch', async () => {
@@ -67,38 +67,40 @@ describe('useQuery', () => {
 		let value = 0;
 		const { result, waitFor } = renderHook(() => useQuery(key, () => ++value));
 
-		await waitFor(() => expect(result.current.data).toBe(1));
+		await waitFor(() => expect(result.current?.data).toBe(1));
 
-		act(() => result.current.refetch());
+		act(() => result.current?.refetch());
 
-		expect(result.current.isLoading).toBe(true);
-		expect(result.current.data).toBe(1);
+		expect(result.current?.isLoading).toBe(true);
+		expect(result.current?.data).toBe(1);
 
-		await waitFor(() => expect(result.current.data).toBe(2));
-		expect(result.current.isLoading).toBe(false);
+		await waitFor(() => expect(result.current?.data).toBe(2));
+		expect(result.current?.isLoading).toBe(false);
 	});
 
 	it('refetches on key change', async () => {
 		let callCount = 0;
 		const key = getUniqueKey();
-		let { result, waitFor } = renderHook(({ queryKey = key } = {}) =>
-			useQuery(queryKey, () => {
-				callCount++;
-				return queryKey;
-			})
+		let { result, waitFor } = renderHook(
+			({ queryKey = key } = /** @type {{queryKey?: string}} */ ({})) =>
+				useQuery(queryKey, () => {
+					callCount++;
+					return queryKey;
+				})
 		);
 
-		await waitFor(() => expect(result.current.data).toBe(key));
+		await waitFor(() => expect(result.current?.data).toBe(key));
 
 		const nextKey = getUniqueKey();
 		// TODO: rerender({ queryKey: nextKey });
-		({ result, waitFor } = renderHook(({ queryKey = nextKey } = {}) =>
-			useQuery(queryKey, () => {
-				callCount++;
-				return queryKey;
-			})
+		({ result, waitFor } = renderHook(
+			({ queryKey = nextKey } = /** @type {{queryKey?: string}} */ ({})) =>
+				useQuery(queryKey, () => {
+					callCount++;
+					return queryKey;
+				})
 		));
-		await waitFor(() => expect(result.current.data).toBe(nextKey));
+		await waitFor(() => expect(result.current?.data).toBe(nextKey));
 
 		expect(callCount).toBe(2);
 
@@ -121,15 +123,15 @@ describe('useQuery', () => {
 		const { result: result2, waitFor: waitFor2 } = renderHook(() => useQuery(key, fetcher));
 
 		await Promise.all([
-			waitFor1(() => result1.current.isSuccess),
-			waitFor2(() => result2.current.isSuccess),
+			waitFor1(() => result1.current?.isSuccess),
+			waitFor2(() => result2.current?.isSuccess),
 		]);
 
-		act(() => result1.current.refetch());
+		act(() => result1.current?.refetch());
 
 		await Promise.all([
-			waitFor1(() => expect(result1.current.data).toBe(2)),
-			waitFor2(() => expect(result2.current.data).toBe(2)),
+			waitFor1(() => expect(result1.current?.data).toBe(2)),
+			waitFor2(() => expect(result2.current?.data).toBe(2)),
 		]);
 	});
 
@@ -150,7 +152,7 @@ describe('useQuery', () => {
 		const error = new Error();
 		const { result, waitFor } = renderHook(() => useQuery(key, jest.fn().mockRejectedValue(error)));
 
-		await waitFor(() => result.current.isError);
+		await waitFor(() => result.current?.isError);
 
 		expect(result.current).toEqual({
 			status: 'error',
@@ -171,8 +173,8 @@ describe('useQuery', () => {
 			useQuery(key, jest.fn().mockRejectedValueOnce(error).mockReturnValue(null))
 		);
 
-		await waitFor(() => result.current.isError);
-		act(() => result.current.refetch());
+		await waitFor(() => result.current?.isError);
+		act(() => result.current?.refetch());
 
 		expect(result.current).toEqual({
 			status: 'loading',
@@ -183,7 +185,7 @@ describe('useQuery', () => {
 			setData: expect.any(Function),
 		});
 
-		await waitFor(() => result.current.isSuccess);
+		await waitFor(() => result.current?.isSuccess);
 
 		expect(result.current).toEqual({
 			status: 'success',
@@ -204,9 +206,9 @@ describe('useQuery', () => {
 			useQuery(key, jest.fn().mockReturnValueOnce(null).mockRejectedValue(error))
 		);
 
-		await waitFor(() => result.current.isSuccess);
-		act(() => result.current.refetch());
-		await waitFor(() => result.current.isError);
+		await waitFor(() => result.current?.isSuccess);
+		act(() => result.current?.refetch());
+		await waitFor(() => result.current?.isError);
 
 		expect(result.current).toEqual({
 			status: 'error',
@@ -227,15 +229,15 @@ describe('useQuery', () => {
 		const { result: result2, waitFor: waitFor2 } = renderHook(() => useQuery(key, fetcher));
 
 		await Promise.all([
-			waitFor1(() => result1.current.isSuccess),
-			waitFor2(() => result2.current.isSuccess),
+			waitFor1(() => result1.current?.isSuccess),
+			waitFor2(() => result2.current?.isSuccess),
 		]);
 
-		act(() => result1.current.setData(2));
+		act(() => result1.current?.setData(2));
 
 		await Promise.all([
-			waitFor1(() => expect(result1.current.data).toBe(2)),
-			waitFor2(() => expect(result2.current.data).toBe(2)),
+			waitFor1(() => expect(result1.current?.data).toBe(2)),
+			waitFor2(() => expect(result2.current?.data).toBe(2)),
 		]);
 	});
 });

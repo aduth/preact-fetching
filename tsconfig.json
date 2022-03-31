@@ -12,5 +12,5 @@
 		"allowJs": true,
 		"checkJs": true
 	},
-	"files": ["./src/index.js"]
+	"include": ["src"]
 }
