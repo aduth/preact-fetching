@@ -105,6 +105,7 @@ import { useState, useContext, useEffect } from 'preact/hooks';
  *
  * @prop {'loading'} status
  * @prop {Data=} data
+ * @prop {undefined} [error]
  * @prop {true} isLoading
  * @prop {false} isSuccess
  * @prop {false} isError
@@ -120,6 +121,7 @@ import { useState, useContext, useEffect } from 'preact/hooks';
  *
  * @prop {'success'} status
  * @prop {Data} data
+ * @prop {undefined} [error]
  * @prop {false} isLoading
  * @prop {true} isSuccess
  * @prop {false} isError

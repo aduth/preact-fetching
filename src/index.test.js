@@ -244,4 +244,21 @@ describe('useQuery', () => {
 			waitFor2(() => expect(result2.current?.data).toBe(2)),
 		]);
 	});
+
+	it('has valid types for common properties', () => {
+		// The test cases above are not able to test for this since Jest `toEqual` types don't
+		// type-check against the value under test.
+		const key = getUniqueKey();
+		const fetcher = () => null;
+		const { result } = renderHook(() => useQuery(key, fetcher));
+
+		result.current?.status;
+		result.current?.data;
+		result.current?.isLoading;
+		result.current?.isSuccess;
+		result.current?.isError;
+		result.current?.error;
+		result.current?.setData;
+		result.current?.refetch;
+	});
 });
