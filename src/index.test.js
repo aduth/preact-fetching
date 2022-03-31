@@ -183,6 +183,7 @@ describe('useQuery', () => {
 			isLoading: true,
 			isSuccess: false,
 			isError: false,
+			error: undefined,
 			refetch: expect.any(Function),
 			setData: expect.any(Function),
 		});
@@ -194,6 +195,7 @@ describe('useQuery', () => {
 			isLoading: false,
 			isSuccess: true,
 			isError: false,
+			error: undefined,
 			data: null,
 			refetch: expect.any(Function),
 			setData: expect.any(Function),
