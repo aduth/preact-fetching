@@ -17,7 +17,7 @@ _Note:_ This project is currently in an early prerelease status, and breaking ch
 import { useQuery } from 'preact-fetching';
 
 function GitHubStars({ owner, repo }) {
-	const { isLoading, isError, error, data } = useQuery(#[owner, repo], async () => {
+	const { isLoading, isError, error, data } = useQuery(`${owner}/${repo}`, async () => {
 		const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
 		const data = await response.json();
 		return data.stargazers_count;
@@ -42,9 +42,9 @@ function GitHubStars({ owner, repo }) {
 
 The fetching function will be called any time a component is mounted and there is not already a fetch in progress for that key. Requests are deduplicated if many components are mounted at the same time which reference the same data. Data is refetched if when future components are mounted using that same key, during which time the stale data will still be available.
 
-The default cache behavior uses a simple [`Map` object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) to reference cached values by key. For array or object values, you can consider one of the following:
+The default cache behavior uses a simple [`Map` object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) to reference cached values, so a key must be strictly equal on subsequent renders for a cache hit to occur (for example, using a string). For array or object values, you can consider one of the following:
 
-- As in the example above, using the experimental [records and tuples feature](https://github.com/tc39/proposal-record-tuple).
+- Using the experimental [records and tuples language feature](https://github.com/tc39/proposal-record-tuple).
 - Changing the cache to one which implements the Map interface, but supports deep object equivalency (for example, [EquivalentKeyMap](https://github.com/aduth/equivalent-key-map)).
 
 ## Installation
