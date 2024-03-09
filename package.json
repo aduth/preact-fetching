@@ -2,12 +2,11 @@
 	"name": "preact-fetching",
 	"version": "0.1.1",
 	"description": "Preact hooks for asynchronous data fetching",
-	"main": "build/index.js",
-	"module": "build/index.esm.js",
+	"type": "module",
 	"exports": {
 		".": {
-			"import": "./build/index.esm.js",
-			"require": "./build/index.js"
+			"import": "./build/index.js",
+			"require": "./build/index.cjs"
 		}
 	},
 	"typings": "build/index.d.ts",
@@ -17,18 +16,18 @@
 	],
 	"scripts": {
 		"clean": "rimraf build",
-		"compile:cjs": "esbuild src/index.js --outfile=build/index.js --format=cjs",
-		"compile:esm": "esbuild src/index.js --outfile=build/index.esm.js --format=esm",
+		"compile:cjs": "esbuild src/index.js --outfile=build/index.cjs --format=cjs",
+		"compile:esm": "esbuild src/index.js --outfile=build/index.js --format=esm",
 		"compile": "run-p compile:*",
-		"minify:cjs": "esbuild build/index.js --minify --outfile=build/index.min.js --format=cjs",
-		"minify:esm": "esbuild build/index.esm.js --minify --outfile=build/index.esm.min.js --format=esm",
+		"minify:cjs": "esbuild src/index.js --minify --outfile=build/index.min.cjs --format=cjs",
+		"minify:esm": "esbuild src/index.js --minify --outfile=build/index.min.js --format=esm",
 		"minify": "run-p minify:*",
 		"compile-minify": "run-s compile minify",
 		"prebuild": "npm run clean",
 		"build": "run-p typecheck compile-minify",
 		"typecheck": "tsc",
 		"lint": "eslint src",
-		"unit-test": "node --import=esbuild-esm-loader/register --test",
+		"unit-test": "node --test",
 		"test": "run-p typecheck lint unit-test",
 		"prepublishOnly": "run-p test build"
 	},
@@ -58,7 +57,6 @@
 		"@types/node": "^20.11.25",
 		"@types/sinon": "^17.0.3",
 		"esbuild": "^0.20.1",
-		"esbuild-esm-loader": "^0.3.1",
 		"eslint": "^8.57.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-prettier": "^5.1.3",
