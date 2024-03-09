@@ -12,7 +12,9 @@
 	},
 	"sideEffects": false,
 	"files": [
-		"build"
+		"build/index.js",
+		"build/index.cjs",
+		"build/index.d.ts"
 	],
 	"scripts": {
 		"clean": "rimraf build",
