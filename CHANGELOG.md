@@ -1,3 +1,9 @@
+# Unreleased
+
+## Bug Fixes
+
+- Fix TypeScript errors when respecting package.json exports
+
 # 0.1.1 (2022-03-30)
 
 ## Bug Fixes
