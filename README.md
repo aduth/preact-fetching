@@ -98,6 +98,6 @@ Context serving as cache state container. For most usage, you shouldn't need to 
 
 ## License
 
-Copyright 2020 Andrew Duthie
+Copyright 2024 Andrew Duthie
 
 Released under the MIT License. See [LICENSE.md](./LICENSE.md).
