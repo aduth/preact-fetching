@@ -1,7 +1,4 @@
 {
 	"root": true,
-	"extends": ["@aduth/eslint-config"],
-	"env": {
-		"jest": true
-	}
+	"extends": ["@aduth/eslint-config"]
 }

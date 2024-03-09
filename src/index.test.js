@@ -1,87 +1,95 @@
+import { describe, before, after, it } from 'node:test';
+import assert from 'node:assert';
+import { GlobalRegistrator } from '@happy-dom/global-registrator';
+import sinon from 'sinon';
 import { createElement } from 'preact';
-import { renderHook, act } from '@testing-library/preact-hooks';
-import { useQuery, CacheContext } from '.';
+import { renderHook, act, waitFor } from '@testing-library/preact';
+import { useQuery, CacheContext } from './index.js';
 
 const getUniqueKey = () => `example${++getUniqueKey.counter}`;
 getUniqueKey.counter = 0;
 
 describe('useQuery', () => {
+	before(() => {
+		GlobalRegistrator.register();
+	});
+
+	after(() => {
+		GlobalRegistrator.unregister();
+	});
+
 	it('returns initial value', () => {
 		const key = getUniqueKey();
 		const fetcher = () => null;
 		const { result } = renderHook(() => useQuery(key, fetcher));
 
-		expect(result.current).toEqual({
-			status: 'loading',
-			isLoading: true,
-			isSuccess: false,
-			isError: false,
-			refetch: expect.any(Function),
-			setData: expect.any(Function),
-		});
+		assert.strictEqual(result.current?.status, 'loading');
+		assert.strictEqual(result.current?.isLoading, true);
+		assert.strictEqual(result.current?.isSuccess, false);
+		assert.strictEqual(result.current?.isError, false);
+		assert.strictEqual(typeof result.current?.refetch, 'function');
+		assert.strictEqual(typeof result.current?.setData, 'function');
 	});
 
 	it('renders with resolved value', async () => {
 		const key = getUniqueKey();
-		const { result, waitFor } = renderHook(() => useQuery(key, () => null));
+		const { result } = renderHook(() => useQuery(key, () => null));
 
-		await waitFor(() => expect(result.current?.status).toBe('success'));
+		await waitFor(() => assert.strictEqual(result.current?.status, 'success'));
 
-		expect(result.current).toEqual({
-			status: 'success',
-			isLoading: false,
-			isSuccess: true,
-			isError: false,
-			data: null,
-			refetch: expect.any(Function),
-			setData: expect.any(Function),
-		});
+		assert.strictEqual(result.current?.status, 'success');
+		assert.strictEqual(result.current?.isLoading, false);
+		assert.strictEqual(result.current?.isSuccess, true);
+		assert.strictEqual(result.current?.isError, false);
+		assert.strictEqual(result.current?.data, null);
+		assert.strictEqual(typeof result.current?.refetch, 'function');
+		assert.strictEqual(typeof result.current?.setData, 'function');
 	});
 
 	it('dedupes multiple queries of same key', async () => {
 		const key = getUniqueKey();
-		const fetcher = jest.fn().mockReturnValue(null);
-		const { result: result1, waitFor: waitFor1 } = renderHook(() => useQuery(key, fetcher));
-		const { result: result2, waitFor: waitFor2 } = renderHook(() => useQuery(key, fetcher));
+		const fetcher = sinon.stub().returns(null);
+		const { result: result1 } = renderHook(() => useQuery(key, fetcher));
+		const { result: result2 } = renderHook(() => useQuery(key, fetcher));
 
 		await Promise.all([
-			waitFor1(() => expect(result1.current?.data).toBe(null)),
-			waitFor2(() => expect(result2.current?.data).toBe(null)),
+			waitFor(() => assert.strictEqual(result1.current?.data, null)),
+			waitFor(() => assert.strictEqual(result2.current?.data, null)),
 		]);
 
-		expect(fetcher).toBeCalledTimes(1);
+		assert.strictEqual(fetcher.callCount, 1);
 	});
 
 	it('refetches', async () => {
 		const key = getUniqueKey();
 		let value = 0;
-		const { result, waitFor } = renderHook(() => useQuery(key, () => ++value));
+		const { result } = renderHook(() => useQuery(key, () => ++value));
 
-		await waitFor(() => expect(result.current?.data).toBe(1));
+		await waitFor(() => assert.strictEqual(result.current?.data, 1));
 		act(() => result.current?.refetch());
-		await waitFor(() => expect(result.current?.data).toBe(2));
+		await waitFor(() => assert.strictEqual(result.current?.data, 2));
 	});
 
 	it('maintains data during refetch', async () => {
 		const key = getUniqueKey();
 		let value = 0;
-		const { result, waitFor } = renderHook(() => useQuery(key, () => ++value));
+		const { result } = renderHook(() => useQuery(key, () => ++value));
 
-		await waitFor(() => expect(result.current?.data).toBe(1));
+		await waitFor(() => assert.strictEqual(result.current?.data, 1));
 
 		act(() => result.current?.refetch());
 
-		expect(result.current?.isLoading).toBe(true);
-		expect(result.current?.data).toBe(1);
+		assert.strictEqual(result.current?.isLoading, true);
+		assert.strictEqual(result.current?.data, 1);
 
-		await waitFor(() => expect(result.current?.data).toBe(2));
-		expect(result.current?.isLoading).toBe(false);
+		await waitFor(() => assert.strictEqual(result.current?.data, 2));
+		assert.strictEqual(result.current?.isLoading, false);
 	});
 
 	it('refetches on key change', async () => {
 		let callCount = 0;
 		const key = getUniqueKey();
-		let { result, waitFor } = renderHook(
+		let { result } = renderHook(
 			/** @param {{queryKey?: string}} Props */
 			({ queryKey = key } = {}) =>
 				useQuery(queryKey, () => {
@@ -90,11 +98,11 @@ describe('useQuery', () => {
 				})
 		);
 
-		await waitFor(() => expect(result.current?.data).toBe(key));
+		await waitFor(() => assert.strictEqual(result.current?.data, key));
 
 		const nextKey = getUniqueKey();
 		// TODO: rerender({ queryKey: nextKey });
-		({ result, waitFor } = renderHook(
+		({ result } = renderHook(
 			/** @param {{queryKey?: string}} Props */
 			({ queryKey = nextKey } = {}) =>
 				useQuery(queryKey, () => {
@@ -102,38 +110,35 @@ describe('useQuery', () => {
 					return queryKey;
 				})
 		));
-		await waitFor(() => expect(result.current?.data).toBe(nextKey));
+		await waitFor(() => assert.strictEqual(result.current?.data, nextKey));
 
-		expect(callCount).toBe(2);
-
-		expect(result.current).toEqual({
-			status: 'success',
-			isLoading: false,
-			isSuccess: true,
-			isError: false,
-			data: nextKey,
-			refetch: expect.any(Function),
-			setData: expect.any(Function),
-		});
+		assert.strictEqual(callCount, 2);
+		assert.strictEqual(result.current?.status, 'success');
+		assert.strictEqual(result.current?.isLoading, false);
+		assert.strictEqual(result.current?.isSuccess, true);
+		assert.strictEqual(result.current?.isError, false);
+		assert.strictEqual(result.current?.data, nextKey);
+		assert.strictEqual(typeof result.current?.refetch, 'function');
+		assert.strictEqual(typeof result.current?.setData, 'function');
 	});
 
 	it('rerenders on refetch on all subscribed', async () => {
 		const key = getUniqueKey();
 		let value = 0;
 		const fetcher = () => ++value;
-		const { result: result1, waitFor: waitFor1 } = renderHook(() => useQuery(key, fetcher));
-		const { result: result2, waitFor: waitFor2 } = renderHook(() => useQuery(key, fetcher));
+		const { result: result1 } = renderHook(() => useQuery(key, fetcher));
+		const { result: result2 } = renderHook(() => useQuery(key, fetcher));
 
 		await Promise.all([
-			waitFor1(() => result1.current?.isSuccess),
-			waitFor2(() => result2.current?.isSuccess),
+			waitFor(() => assert(result1.current?.isSuccess)),
+			waitFor(() => assert(result2.current?.isSuccess)),
 		]);
 
 		act(() => result1.current?.refetch());
 
 		await Promise.all([
-			waitFor1(() => expect(result1.current?.data).toBe(2)),
-			waitFor2(() => expect(result2.current?.data).toBe(2)),
+			waitFor(() => assert.strictEqual(result1.current?.data, 2)),
+			waitFor(() => assert.strictEqual(result2.current?.data, 2)),
 		]);
 	});
 
@@ -144,110 +149,94 @@ describe('useQuery', () => {
 			wrapper: ({ children }) => createElement(CacheContext.Provider, { value: cache, children }),
 		});
 
-		expect(cache.size).toBe(1);
+		assert.strictEqual(cache.size, 1);
 		unmount();
-		expect(cache.size).toBe(0);
+		assert.strictEqual(cache.size, 0);
 	});
 
 	it('renders with error', async () => {
 		const key = getUniqueKey();
 		const error = new Error();
-		const { result, waitFor } = renderHook(() => useQuery(key, jest.fn().mockRejectedValue(error)));
+		const { result } = renderHook(() => useQuery(key, sinon.stub().rejects(error)));
 
-		await waitFor(() => result.current?.isError);
+		await waitFor(() => assert(result.current?.isError));
 
-		expect(result.current).toEqual({
-			status: 'error',
-			isLoading: false,
-			isSuccess: false,
-			isError: true,
-			error,
-			refetch: expect.any(Function),
-			setData: expect.any(Function),
-		});
+		assert.strictEqual(result.current?.status, 'error');
+		assert.strictEqual(result.current?.isLoading, false);
+		assert.strictEqual(result.current?.isSuccess, false);
+		assert.strictEqual(result.current?.isError, true);
+		assert.strictEqual(result.current?.error, error);
+		assert.strictEqual(typeof result.current?.refetch, 'function');
+		assert.strictEqual(typeof result.current?.setData, 'function');
 	});
 
 	it('renders with data on refetch after error', async () => {
 		const key = getUniqueKey();
 		const error = new Error();
 
-		const { result, waitFor } = renderHook(() =>
-			useQuery(key, jest.fn().mockRejectedValueOnce(error).mockReturnValue(null))
+		const { result } = renderHook(() =>
+			useQuery(key, sinon.stub().onFirstCall().rejects(error).onSecondCall().returns(null))
 		);
 
-		await waitFor(() => result.current?.isError);
+		await waitFor(() => assert(result.current?.isError));
 		act(() => result.current?.refetch());
 
-		expect(result.current).toEqual({
-			status: 'loading',
-			isLoading: true,
-			isSuccess: false,
-			isError: false,
-			error: undefined,
-			refetch: expect.any(Function),
-			setData: expect.any(Function),
-		});
+		await waitFor(() => assert(result.current?.isSuccess));
 
-		await waitFor(() => result.current?.isSuccess);
-
-		expect(result.current).toEqual({
-			status: 'success',
-			isLoading: false,
-			isSuccess: true,
-			isError: false,
-			error: undefined,
-			data: null,
-			refetch: expect.any(Function),
-			setData: expect.any(Function),
-		});
+		assert.strictEqual(result.current?.status, 'success');
+		assert.strictEqual(result.current?.isLoading, false);
+		assert.strictEqual(result.current?.isSuccess, true);
+		assert.strictEqual(result.current?.isError, false);
+		assert.strictEqual(result.current?.error, undefined);
+		assert.strictEqual(result.current?.data, null);
+		assert.strictEqual(typeof result.current?.refetch, 'function');
+		assert.strictEqual(typeof result.current?.setData, 'function');
 	});
 
 	it('renders with data on error after fetch', async () => {
 		const key = getUniqueKey();
 		const error = new Error();
 
-		const { result, waitFor } = renderHook(() =>
-			useQuery(key, jest.fn().mockReturnValueOnce(null).mockRejectedValue(error))
+		const { result } = renderHook(() =>
+			useQuery(key, sinon.stub().onFirstCall().returns(null).onSecondCall().rejects(error))
 		);
 
-		await waitFor(() => result.current?.isSuccess);
+		await waitFor(() => assert(result.current?.isSuccess));
 		act(() => result.current?.refetch());
-		await waitFor(() => result.current?.isError);
+		await waitFor(() => assert(result.current?.isError));
 
-		expect(result.current).toEqual({
-			status: 'error',
-			isLoading: false,
-			isSuccess: false,
-			isError: true,
-			data: null,
-			error,
-			refetch: expect.any(Function),
-			setData: expect.any(Function),
-		});
+		assert.strictEqual(result.current?.status, 'error');
+		assert.strictEqual(result.current?.isLoading, false);
+		assert.strictEqual(result.current?.isSuccess, false);
+		assert.strictEqual(result.current?.isError, true);
+		assert.strictEqual(result.current?.error, error);
+		assert.strictEqual(result.current?.data, null);
+		assert.strictEqual(typeof result.current?.refetch, 'function');
+		assert.strictEqual(typeof result.current?.setData, 'function');
 	});
 
 	it('sets data for all subscribers', async () => {
 		const key = getUniqueKey();
 		const fetcher = () => 1;
-		const { result: result1, waitFor: waitFor1 } = renderHook(() => useQuery(key, fetcher));
-		const { result: result2, waitFor: waitFor2 } = renderHook(() => useQuery(key, fetcher));
+		const { result: result1 } = renderHook(() => useQuery(key, fetcher));
+		const { result: result2 } = renderHook(() => useQuery(key, fetcher));
 
 		await Promise.all([
-			waitFor1(() => result1.current?.isSuccess),
-			waitFor2(() => result2.current?.isSuccess),
+			waitFor(() => assert(result1.current?.isSuccess)),
+			waitFor(() => assert(result2.current?.isSuccess)),
 		]);
 
 		act(() => result1.current?.setData(2));
 
 		await Promise.all([
-			waitFor1(() => expect(result1.current?.data).toBe(2)),
-			waitFor2(() => expect(result2.current?.data).toBe(2)),
+			waitFor(() => assert.strictEqual(result1.current?.data, 2)),
+			waitFor(() => assert.strictEqual(result2.current?.data, 2)),
 		]);
 	});
 
 	it('has valid types for common properties', () => {
-		// The test cases above are not able to test for this since Jest `toEqual` types don't
-		// type-check against the value under test.
+		// The test cases above are not able to test for this since assertions don't type-check
+		// against the value under test.
 		const key = getUniqueKey();
 		const fetcher = () => null;
 		const { result } = renderHook(() => useQuery(key, fetcher));

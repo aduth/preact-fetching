@@ -75,10 +75,12 @@ Triggers a new fetch request as appropriate and returns a result of the current 
 ### `CacheContext`
 
 ```ts
-let CacheContext: import('preact').Context<MapLike<
-	any,
-	CacheLoadingEntry<any> | CacheSuccessEntry<any> | CacheErrorEntry<any> | CacheIdleEntry<any>
->>;
+let CacheContext: import('preact').Context<
+	MapLike<
+		any,
+		CacheLoadingEntry<any> | CacheSuccessEntry<any> | CacheErrorEntry<any> | CacheIdleEntry<any>
+	>
+>;
 ```
 
 Context serving as cache state container. For most usage, you shouldn't need to interface with the context object, but in advanced use-cases you can use this to substitute or scope caches.
