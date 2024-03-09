@@ -17,11 +17,11 @@
 	],
 	"scripts": {
 		"clean": "rimraf build",
-		"compile:cjs": "babel src/index.js -o build/index.js",
-		"compile:esm": "BABEL_ENV=esm babel src/index.js -o build/index.esm.js",
+		"compile:cjs": "esbuild src/index.js --outfile=build/index.js --format=cjs",
+		"compile:esm": "esbuild src/index.js --outfile=build/index.esm.js --format=esm",
 		"compile": "run-p compile:*",
-		"minify:cjs": "terser build/index.js -m -o build/index.min.js",
-		"minify:esm": "terser build/index.esm.js -m -o build/index.esm.min.js",
+		"minify:cjs": "esbuild build/index.js --minify --outfile=build/index.min.js --format=cjs",
+		"minify:esm": "esbuild build/index.esm.js --minify --outfile=build/index.esm.min.js --format=esm",
 		"minify": "run-p minify:*",
 		"compile-minify": "run-s compile minify",
 		"prebuild": "npm run clean",
@@ -53,14 +53,10 @@
 	],
 	"devDependencies": {
 		"@aduth/eslint-config": "^4.4.1",
-		"@babel/cli": "^7.17.6",
-		"@babel/core": "^7.17.8",
-		"@babel/preset-env": "^7.16.11",
 		"@happy-dom/global-registrator": "^13.7.1",
 		"@testing-library/preact": "^3.2.3",
 		"@types/node": "^20.11.25",
 		"@types/sinon": "^17.0.3",
-		"core-js": "^3.21.1",
 		"esbuild": "^0.20.1",
 		"esbuild-esm-loader": "^0.3.1",
 		"eslint": "^8.12.0",
@@ -71,7 +67,6 @@
 		"prettier": "^2.6.1",
 		"rimraf": "^3.0.2",
 		"sinon": "^17.0.1",
-		"terser": "^5.12.1",
 		"typescript": "^4.6.3"
 	},
 	"peerDependencies": {
