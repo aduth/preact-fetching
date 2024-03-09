@@ -95,7 +95,7 @@ describe('useQuery', () => {
 				useQuery(queryKey, () => {
 					callCount++;
 					return queryKey;
-				})
+				}),
 		);
 
 		await waitFor(() => assert.strictEqual(result.current?.data, key));
@@ -108,7 +108,7 @@ describe('useQuery', () => {
 				useQuery(queryKey, () => {
 					callCount++;
 					return queryKey;
-				})
+				}),
 		));
 		await waitFor(() => assert.strictEqual(result.current?.data, nextKey));
 
@@ -175,7 +175,7 @@ describe('useQuery', () => {
 		const error = new Error();
 
 		const { result } = renderHook(() =>
-			useQuery(key, sinon.stub().onFirstCall().rejects(error).onSecondCall().returns(null))
+			useQuery(key, sinon.stub().onFirstCall().rejects(error).onSecondCall().returns(null)),
 		);
 
 		await waitFor(() => assert(result.current?.isError));
@@ -198,7 +198,7 @@ describe('useQuery', () => {
 		const error = new Error();
 
 		const { result } = renderHook(() =>
-			useQuery(key, sinon.stub().onFirstCall().returns(null).onSecondCall().rejects(error))
+			useQuery(key, sinon.stub().onFirstCall().returns(null).onSecondCall().rejects(error)),
 		);
 
 		await waitFor(() => assert(result.current?.isSuccess));
