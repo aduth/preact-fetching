@@ -2,8 +2,6 @@
 
 Preact hooks for asynchronous data fetching.
 
-_Note:_ This project is currently in an early prerelease status, and breaking changes to the API may still occur until a 1.0 release.
-
 ## Features
 
 - **Promise-based data fetching**. Unopinionated about the source of your data.
