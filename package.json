@@ -1,6 +1,6 @@
 {
 	"name": "preact-fetching",
-	"version": "0.1.2",
+	"version": "1.0.0",
 	"description": "Preact hooks for asynchronous data fetching",
 	"type": "module",
 	"exports": {
