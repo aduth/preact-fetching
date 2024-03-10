@@ -260,6 +260,10 @@ function useQuery(key, fetcher) {
 	}
 
 	function refetch() {
+		if (key == null) {
+			return;
+		}
+
 		setCacheValue({ status: 'loading' });
 
 		Promise.resolve(fetcher())

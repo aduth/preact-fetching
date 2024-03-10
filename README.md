@@ -10,6 +10,7 @@ _Note:_ This project is currently in an early prerelease status, and breaking ch
 - **Small bundle size**. Less than 0.5kb minified and gzipped.
 - **TypeScript support**. Respects the resolved type of your fetcher implementation.
 - **Configurable global cache**. All components share the same data by distinct keys.
+- **Conditional data fetching**. Supports advanced use-cases like form submission.
 
 ## Example
 
@@ -35,18 +36,6 @@ function GitHubStars({ owner, repo }) {
 }
 ```
 
-`useQuery` accepts two arguments:
-
-- A key to uniquely identify the data being fetched.
-- A function which fetches the data and returns either a promise or the resulting data.
-
-The fetching function will be called any time a component is mounted and there is not already a fetch in progress for that key. Requests are deduplicated if many components are mounted at the same time which reference the same data. Data is refetched if when future components are mounted using that same key, during which time the stale data will still be available.
-
-The default cache behavior uses a simple [`Map` object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) to reference cached values, so a key must be strictly equal on subsequent renders for a cache hit to occur (for example, using a string). For array or object values, you can consider one of the following:
-
-- Using the experimental [records and tuples language feature](https://github.com/tc39/proposal-record-tuple).
-- Changing the cache to one which implements the Map interface, but supports deep object equivalency (for example, [EquivalentKeyMap](https://github.com/aduth/equivalent-key-map)).
-
 ## Installation
 
 Install using [NPM](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/):
@@ -59,6 +48,32 @@ npm install preact-fetching
 yarn add preact-fetching
 ```
 
+## Usage
+
+`useQuery` accepts two arguments:
+
+- A key to uniquely identify the data being fetched.
+- A function which fetches the data and returns either a promise or the resulting data.
+
+### Fetching
+
+The fetching function will be called any time a component is mounted and there is not already a fetch in progress for that key. Requests are deduplicated if many components are mounted at the same time which reference the same data. Data is refetched if when future components are mounted using that same key, during which time the stale data will still be available.
+
+### Cache
+
+The default cache behavior uses a simple [`Map` object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) to reference cached values.
+
+### Cache Key
+
+Because the default cache behavior uses a simple `Map` object, a key must be strictly equal on subsequent renders for a cache hit to occur (for example, using a string). For array or object values, you can consider one of the following:
+
+- Using the experimental [records and tuples language feature](https://github.com/tc39/proposal-record-tuple).
+- Changing the cache to one which implements the Map interface, but supports deep object equivalency (for example, [EquivalentKeyMap](https://github.com/aduth/equivalent-key-map)).
+
+### Conditional Fetching
+
+To prevent the fetch behavior based on some condition, pass a nullish (`null` or `undefined`) value as the key. If a nullish value is passed as the key, fetching will not occur.
+
 ## API
 
 ### `useQuery`
@@ -66,7 +81,7 @@ yarn add preact-fetching
 ```ts
 function useQuery<Data>(
 	key: any,
-	fetcher: () => Data | Promise<Data>
+	fetcher: () => Data | Promise<Data>,
 ): LoadingResult<Data> | SuccessResult<Data> | ErrorResult<Data> | IdleResult<Data>;
 ```
 

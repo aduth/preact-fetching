@@ -254,4 +254,13 @@ describe('useQuery', () => {
 		result.current?.setData;
 		result.current?.refetch;
 	});
+
+	it('supports conditional fetching by nullish key', async () => {
+		const fetcher = mock.fn(() => null);
+		const { result } = renderHook(() => useQuery(null, fetcher));
+
+		await waitFor(() => assert.strictEqual(result.current?.isLoading, false));
+
+		assert.strictEqual(fetcher.mock.callCount(), 0);
+	});
 });

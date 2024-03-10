@@ -1,3 +1,9 @@
+# Unreleased
+
+## New Features
+
+- Add support for conditional data fetching.
+
 # 0.1.2 (2024-03-10)
 
 ## Bug Fixes
