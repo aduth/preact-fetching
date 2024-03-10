@@ -1,7 +1,6 @@
-import { describe, before, after, it } from 'node:test';
+import { describe, before, after, it, mock } from 'node:test';
 import assert from 'node:assert';
 import { GlobalRegistrator } from '@happy-dom/global-registrator';
-import sinon from 'sinon';
 import { createElement } from 'preact';
 import { renderHook, act, waitFor } from '@testing-library/preact';
 import { useQuery, CacheContext } from './index.js';
@@ -48,7 +47,7 @@ describe('useQuery', () => {
 
 	it('dedupes multiple queries of same key', async () => {
 		const key = getUniqueKey();
-		const fetcher = sinon.stub().returns(null);
+		const fetcher = mock.fn(() => null);
 		const { result: result1 } = renderHook(() => useQuery(key, fetcher));
 		const { result: result2 } = renderHook(() => useQuery(key, fetcher));
 
@@ -57,7 +56,7 @@ describe('useQuery', () => {
 			waitFor(() => assert.strictEqual(result2.current?.data, null)),
 		]);
 
-		assert.strictEqual(fetcher.callCount, 1);
+		assert.strictEqual(fetcher.mock.callCount(), 1);
 	});
 
 	it('refetches', async () => {
@@ -157,7 +156,12 @@ describe('useQuery', () => {
 	it('renders with error', async () => {
 		const key = getUniqueKey();
 		const error = new Error();
-		const { result } = renderHook(() => useQuery(key, sinon.stub().rejects(error)));
+		const { result } = renderHook(() =>
+			useQuery(
+				key,
+				mock.fn(() => Promise.reject(error)),
+			),
+		);
 
 		await waitFor(() => assert(result.current?.isError));
 
@@ -173,10 +177,10 @@ describe('useQuery', () => {
 	it('renders with data on refetch after error', async () => {
 		const key = getUniqueKey();
 		const error = new Error();
+		const fetcher = mock.fn(() => null);
+		fetcher.mock.mockImplementationOnce(() => Promise.reject(error));
 
-		const { result } = renderHook(() =>
-			useQuery(key, sinon.stub().onFirstCall().rejects(error).onSecondCall().returns(null)),
-		);
+		const { result } = renderHook(() => useQuery(key, fetcher));
 
 		await waitFor(() => assert(result.current?.isError));
 		act(() => result.current?.refetch());
@@ -196,12 +200,12 @@ describe('useQuery', () => {
 	it('renders with data on error after fetch', async () => {
 		const key = getUniqueKey();
 		const error = new Error();
+		const fetcher = mock.fn(() => null);
 
-		const { result } = renderHook(() =>
-			useQuery(key, sinon.stub().onFirstCall().returns(null).onSecondCall().rejects(error)),
-		);
+		const { result } = renderHook(() => useQuery(key, fetcher));
 
 		await waitFor(() => assert(result.current?.isSuccess));
+		fetcher.mock.mockImplementationOnce(() => Promise.reject(error));
 		act(() => result.current?.refetch());
 		await waitFor(() => assert(result.current?.isError));
 
