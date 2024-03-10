@@ -262,5 +262,13 @@ describe('useQuery', () => {
 		await waitFor(() => assert.strictEqual(result.current?.isLoading, false));
 
 		assert.strictEqual(fetcher.mock.callCount(), 0);
+		assert.strictEqual(result.current?.status, undefined);
+		assert.strictEqual(result.current?.isLoading, false);
+		assert.strictEqual(result.current?.isSuccess, false);
+		assert.strictEqual(result.current?.isError, false);
+		assert.strictEqual(result.current?.error, undefined);
+		assert.strictEqual(result.current?.data, undefined);
+		assert.strictEqual(typeof result.current?.refetch, 'function');
+		assert.strictEqual(typeof result.current?.setData, 'function');
 	});
 });
