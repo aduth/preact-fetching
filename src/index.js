@@ -87,7 +87,7 @@ import { useState, useContext, useEffect } from 'preact/hooks';
  * @template Data
  * @typedef IdleResult<Data>
  *
- * @prop {'loading'|'success'|'error'} [status]
+ * @prop {undefined} [status]
  * @prop {Data} [data]
  * @prop {Error} [error]
  * @prop {false} isLoading
