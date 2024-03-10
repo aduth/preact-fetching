@@ -63,9 +63,9 @@ import { useState, useContext, useEffect } from 'preact/hooks';
  *
  * @template Data
  * @typedef {CacheLoadingEntry<Data>
-	| CacheSuccessEntry<Data>
-	| CacheErrorEntry<Data>
-	| CacheIdleEntry<Data>} CacheEntry
+ *	| CacheSuccessEntry<Data>
+ *	| CacheErrorEntry<Data>
+ *	| CacheIdleEntry<Data>} CacheEntry
  */
 
 /**
@@ -150,9 +150,9 @@ import { useState, useContext, useEffect } from 'preact/hooks';
  *
  * @template Data
  * @typedef {LoadingResult<Data>
-	| SuccessResult<Data>
-	| ErrorResult<Data>
-	| IdleResult<Data>} Result
+ *	| SuccessResult<Data>
+ *	| ErrorResult<Data>
+ *	| IdleResult<Data>} Result
  */
 
 /**
