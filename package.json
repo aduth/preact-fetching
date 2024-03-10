@@ -17,7 +17,7 @@
 		"build/index.d.ts"
 	],
 	"scripts": {
-		"clean": "rimraf build",
+		"clean": "rm -rf build",
 		"compile:cjs": "esbuild src/index.js --outfile=build/index.cjs --format=cjs",
 		"compile:esm": "esbuild src/index.js --outfile=build/index.js --format=esm",
 		"compile": "run-p compile:*",
@@ -64,7 +64,6 @@
 		"npm-run-all": "^4.1.5",
 		"preact": "^10.19.6",
 		"prettier": "^3.2.5",
-		"rimraf": "^5.0.5",
 		"typescript": "^5.4.2"
 	},
 	"peerDependencies": {
