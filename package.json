@@ -41,7 +41,7 @@
 	"homepage": "https://github.com/aduth/preact-fetching",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/aduth/preact-fetching.git"
+		"url": "git+https://github.com/aduth/preact-fetching.git"
 	},
 	"bugs": {
 		"url": "https://github.com/aduth/preact-fetching/issues"
